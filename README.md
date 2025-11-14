@@ -1,67 +1,107 @@
-# 🚀 Flask App Continuous Deployment using Jenkins and Kubernetes
+🚀 CI/CD Pipeline for Dockerized Flask App using Jenkins & Kubernetes (Minikube)
 
-🧭 Project Overview
+This project demonstrates a complete CI/CD pipeline for deploying a Dockerized Python Flask application to a Kubernetes (Minikube) cluster using Jenkins.
 
-This project demonstrates Continuous Deployment (CD) using Jenkins to automate the deployment of a pre-built Dockerized Flask application
-onto a Kubernetes (Minikube) cluster.The Docker image of the Flask app was built and pushed manually to Docker Hub, and Jenkins was 
-configured to automatically pull the latest Kubernetes manifests from GitHub and deploy them to the cluster.
+The pipeline automatically:
 
-| Tool                      | Purpose                                  |
-| ------------------------- | ---------------------------------------- |
-| **Python Flask**          | Application framework                    |
-| **Docker**                | Containerization of the Flask app        |
-| **Docker Hub**            | Image registry (manually uploaded image) |
-| **Kubernetes (Minikube)** | Container orchestration                  |
-| **Jenkins**               | Continuous Deployment automation         |
-| **Git & GitHub**          | Version control and manifest storage     |
+Fetches the latest code from GitHub
 
+Builds a Docker image
 
-⚙️ Pipeline Workflow
-1)Code Fetch
-Jenkins pulls the latest Kubernetes YAMLs and code from GitHub.
+Pushes the image to Docker Hub
 
-2)Deployment Stage
-Jenkins applies the manifests using kubectl to deploy the pre-built image from Docker Hub to Minikube.
+Deploys the updated app to Minikube using Kubernetes manifests
 
-3)Verification
-Once deployed, the Flask app runs on Kubernetes and is exposed via a NodePort service.
-
-
-🗂️ Project Structure
+🧰 Tech Stack
+Tool	Purpose
+Python Flask	Web application
+Docker	Containerization
+Docker Hub	Container registry
+Jenkins	CI/CD automation
+Kubernetes (Minikube)	Deployment environment
+Git & GitHub	Version control & repo hosting
+📂 Project Structure
 pythonflaskapp/
 │
-├── app.py                # Flask application code
-├── requirements.txt      # Python dependencies
-├── Dockerfile            # Used earlier for manual image build
-├── deployment.yaml       # Kubernetes Deployment manifest
-├── service.yaml          # Kubernetes Service manifest
-└── Jenkinsfile           # CD pipeline definition
+├── app.py                # Flask application
+├── requirements.txt      # Dependencies
+├── Dockerfile            # Build container image
+├── deployment.yaml       # Kubernetes Deployment
+├── service.yaml          # Kubernetes Service
+└── Jenkinsfile           # CI/CD pipeline script
 
-🧪 How to Run
-1️⃣ Clone the Repo
+⚙️ Pipeline Workflow
+🔹 1. Fetch Code
+
+Jenkins clones the GitHub repository:
+
 git clone https://github.com/saptarshiroychowdhury/pythonflaskapp.git
-cd pythonflaskapp
 
-2️⃣ (Optional) Verify the Image
-docker pull saptarshi500/flaskapp:latest
+🔹 2. Build Docker Image
 
-3️⃣ Apply Manifests Manually (to test)
+Jenkins builds the image using the Dockerfile:
+
+docker build -t saptarshi500/flaskapp:latest .
+
+🔹 3. Push to Docker Hub
+
+Image is pushed to your Docker Hub repository:
+
+docker push saptarshi500/flaskapp:latest
+
+
+Jenkins uses a stored credential (dockerhub) for login.
+
+🔹 4. Deploy to Kubernetes (Minikube)
+
+Jenkins applies the Kubernetes manifests:
+
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 
-4️⃣ Jenkins Deployment
 
-Create a new Jenkins pipeline.
+This updates the running application with the newly pushed image.
 
-Paste the contents of the Jenkinsfile.
+🧪 How to Run Locally
+1️⃣ Clone the Repository
+git clone https://github.com/saptarshiroychowdhury/pythonflaskapp.git
+cd pythonflaskapp
 
-Run the pipeline — Jenkins will automatically:
+2️⃣ (Optional) Test Locally with Docker
+docker build -t flaskapp .
+docker run -p 5000:5000 flaskapp
 
-Fetch the repository
+🚀 Deploy Manually (If Needed)
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
 
-Apply deployment.yaml and service.yaml using kubectl
-
-✅ Verify Deployment
+Check running pods:
 kubectl get pods
-kubectl get svc
+
+Access the app:
 minikube service pythonflask
+
+🛠️ Jenkins Setup
+1. Install Required Plugins
+
+Docker Pipeline
+
+Kubernetes CLI
+
+Git
+
+2. Add Credentials
+
+Docker Hub username/password → ID: dockerhub
+
+3. Create a Pipeline Job
+
+Use the provided Jenkinsfile in the repo.
+
+📌 What This Project Demonstrates
+
+✔️ Full CI/CD pipeline
+✔️ Automated Docker image build & push
+✔️ Automated Kubernetes deployment
+✔️ Clean folder-based application structure
+✔️ Practical DevOps skills (Docker + Jenkins + K8s)
