@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Fetch Code') {
+            steps {
+                git 'https://github.com/saptarshiroychowdhury/pythonflaskapp.git'
+            }
+        }
+
+        stage('Docker Build and Push') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        bat 'echo %PASS% | docker login -u %USER% --password-stdin'
+                        bat 'docker build -t saptarshi500/flaskapp:latest .'
+                        bat 'docker push saptarshi500/flaskapp:latest'
+                    }
+                }
+            }
+        }
+
+        stage('Deployment') {
+            steps {
+                bat 'kubectl apply -f deployment.yaml'
+                bat 'kubectl apply -f service.yaml'
+            }
+        }
+    }
+}
